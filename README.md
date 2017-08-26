@@ -108,9 +108,9 @@ New context `type` is planned for future versions. With it's introduction both
 `proc` and `loop` contexts will be changed to force object-oriented rules.
 For now, user should follow them manually.
 
-    contract  |  containing | inheritance
---------------|-------------|-------------
-type invariant|    added    |      ?
- pre-condition|    added    | alternative
-loop invariant|    added    |    added
-post-condition|    added    |    added
+|     contract   |  containing | inheritance |
+|----------------|:-----------:|:-----------:|
+| type invariant |    added    |      ?      |
+|  pre-condition |    added    | alternative |
+| loop invariant |    added    |    added    |
+| post-condition |    added    |    added    |
