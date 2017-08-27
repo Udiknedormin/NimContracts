@@ -56,7 +56,7 @@ proc iteratorContract(thisNode: NimNode): NimNode =
         invariantChild[1], newNimNode(nnkVarSection), true).
         reduceOldValues
       let invariantNode = contractInstance(
-        LoopInvariantError.getType, invariantChild[1]).
+        LoopInvariantError.name.ident, invariantChild[1]).
         markBoundageDependent
       Contracts.insert(0, preparationNode)
       implChild[1] = yield2yielded(

@@ -14,7 +14,7 @@ proc loopContract(thisNode: NimNode): NimNode =
         invChild[1], newNimNode(nnkVarSection), true).
         reduceOldValues
       let invNode = contractInstance(
-        LoopInvariantError.getType, invChild[1]).
+        LoopInvariantError.name.ident, invChild[1]).
         markBoundageDependent
       outContracts.insert(0, preparationNode)
       implChild[1].add(invNode).add(updateOldValues(preparationNode))
