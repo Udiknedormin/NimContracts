@@ -18,19 +18,8 @@ import typetraits
 import algorithm
 import strutils
 
-include overview
-include declarations
-include features
-include conHelpers
-include contexts
-
-when isMainModule:
-  proc niceString(s: string): bool {.contractual.} =
-    require:
-      s.len > 3
-    ensure:
-      if s.len < 10: result == true else: result == false
-    body:
-      result = if s.len < 10: true else: false
-
-  echo "AlaKotaMa".niceString
+include contracts.overview
+include contracts.declarations
+include contracts.features
+include contracts.conHelpers
+include contracts.contexts
