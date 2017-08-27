@@ -13,7 +13,7 @@ proc findContract(thisNode: NimNode): NimNode =
   of nnkWhileStmt, nnkForStmt:
     result = loopContract(result)
   of nnkCall:
-    if $result[0] == keyCust:
+    if result[0].kind in {nnkIdent, nnkSym} and $result[0] == keyCust:
       hint(HintMsgCustomContractUsed % [result.lineinfo])
       result = contractInstance(
         CustomContractError.getType, result[1])
