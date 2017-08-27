@@ -22,4 +22,3 @@ include contracts.overview
 include contracts.declarations
 include contracts.features
 include contracts.conHelpers
-include contracts.contexts

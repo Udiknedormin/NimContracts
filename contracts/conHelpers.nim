@@ -3,3 +3,4 @@ include conHelpers.oldValueBinding
 include conHelpers.contractConds
 include conHelpers.outsideContext
 include conHelpers.generalConHelpers
+include conHelpers.contexts
