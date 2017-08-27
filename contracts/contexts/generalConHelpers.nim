@@ -2,7 +2,7 @@
 #
 # General helpers
 #
-template findChildIdx(n: NimNode; cond: expr): int {.immediate.} =
+template findChildIdx(n, cond): int =
   ## Like ``findChild`` but returns an index (-1 if not found).
   block:
     var idx: int = -1
