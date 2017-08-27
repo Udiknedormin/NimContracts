@@ -74,7 +74,7 @@ template ensure* (conds: untyped) =
   ## The last one's return value is the same only if s.len
   ## didn't change.
   static:
-    error(ErrMsgOutsideContractual % keyPost)
+    error(ErrMsgOutsideContractual % $keyPost)
 
 template invariant* (conds: untyped) =
   ## Makes a list of loop invariants, i.e. conditions
@@ -104,7 +104,7 @@ template invariant* (conds: untyped) =
   ##          else:
   ##            resutl = result.right
   static:
-    error(ErrMsgOutsideContractual % keyInvL)
+    error(ErrMsgOutsideContractual % $keyInvL)
 
 template body* (conds: untyped) =
   ## Defines contractual unit's body (implementation).
@@ -112,7 +112,7 @@ template body* (conds: untyped) =
   ## preceding this block. It should be proven that its does,
   ## either through testing or formal proof.
   static:
-    error(ErrMsgOutsideContractual % keyImpl)
+    error(ErrMsgOutsideContractual % $keyImpl)
 
 template promise* (conds: untyped): untyped =
   ## Makes a list of custom conditions, can be inserted
