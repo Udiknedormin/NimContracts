@@ -27,11 +27,10 @@ let
     "'$2' contractual block duplicated in contractual $1" ## \
     ## string to show when contractual entity has
     ## reused the same contractual block
-  ErrMsgContractualAfterNon {.compileTime.} =
-    "'$2' used after non-contractual statement in contractual $1" ## \
-    ## string to show when contractual entity has
-    ## reused the same contractual block
+  ErrInvalidSection {.compileTime.} =
+     "found parametrized contractual section:\n$1" ## \
+    ## string to show when contractual entity has an invalid section
   HintMsgCustomContractUsed {.compileTime.} =
-    "consider using standard contracts instead of '$1' at $$1" % $keyCust ## \
+    "consider using standard contracts instead of '$1' at $$1" %
+    $keyCust ## \
     ## string to show when ``promise`` block is encountered
-

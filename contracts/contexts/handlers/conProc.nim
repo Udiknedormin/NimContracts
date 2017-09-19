@@ -4,5 +4,5 @@
 #
 proc proceduralContract(thisNode: NimNode): NimNode =
   ## Handles contracts for procedures and converters.
-  callableBase ContractKeywordsProc:
+  contextHandle(thisNode, @ContractKeywordsProc) do (it: Context):
     discard

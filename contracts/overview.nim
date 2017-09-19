@@ -134,7 +134,6 @@
 ## - ``assume`` represent assumptions for human reader and external tools
 ##       (no code generated)
 ## - ``promise`` makes custom contracts
-## 
 ##
 ## Future
 ## ======

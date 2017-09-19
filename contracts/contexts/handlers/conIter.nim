@@ -49,25 +49,24 @@ proc yield2yielded(code, conds, binds: NimNode): NimNode =
 proc iteratorContract(thisNode: NimNode): NimNode =
   ## Handles contracts for iterators.
   warning("Loop contracts are known to be buggy as for now, use with caution.")
-  callableBase ContractKeywordsIter:
-    let invariantChild  = Stmts.findChild($it[0] == keyInvL)
-    implChild[1] = return2break(implChild[1])
-    if invariantChild != nil:
+  contextHandle(thisNode, @ContractKeywordsIter) do (it: Context):
+    it.implNode = return2break(it.implNode)
+    if it.invNode != nil:
       let preparationNode = getOldValues(
-        invariantChild[1], newNimNode(nnkVarSection), true).
+        it.invNode, newNimNode(nnkVarSection), true).
         reduceOldValues
       let invariantNode = contractInstance(
-        LoopInvariantError.name.ident, invariantChild[1]).
+        LoopInvariantError.name.ident, it.invNode).
         markBoundageDependent
-      Contracts.insert(0, preparationNode)
-      implChild[1] = yield2yielded(
-        implChild[1],
+      it.preNode.add preparationNode
+      it.implNode = yield2yielded(
+        it.implNode,
         invariantNode,
         updateOldValues(preparationNode))
     else:
-      implChild[1] = yield2yielded(
-        implChild[1],
+      it.implNode = yield2yielded(
+        it.implNode,
         newEmptyNode(),
         newEmptyNode())
-    newStmts.add(thisNode.yieldedVar)
+    it.implNode.add thisNode.yieldedVar
 
