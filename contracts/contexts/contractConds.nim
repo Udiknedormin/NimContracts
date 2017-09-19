@@ -10,9 +10,13 @@ proc contractInstance(exceptionName, code: NimNode): NimNode =
 
       for cond in code:
          let newCond = cond.oldValToIdent
-         let StrRepr = ContractViolatedStr %
+         let strRepr = ContractViolatedStr %
             [($cond.toStrLit).unindent(60).replace("\n", " "),
             cond.lineinfo]
+
+         template raiseImpl(ex, msg): untyped =
+            raise newException(ex, msg)
+         let sig = getAst(raiseImpl(exceptionName, strRepr))
 
          # default 'true' in if-s and when-s
          if (cond.kind == nnkIfStmt or
@@ -22,9 +26,6 @@ proc contractInstance(exceptionName, code: NimNode): NimNode =
                newNimNode(nnkElse).
                   add(newLit(true)))
 
-         let sig = quote do:
-            raise newException(`exceptionName`, `StrRepr`)
-
          result.
             add(newNimNode(nnkElifBranch).
                add(newCond.prefix("not")).
@@ -33,4 +34,3 @@ proc contractInstance(exceptionName, code: NimNode): NimNode =
 macro contractInstanceMacro(exceptionName, code: untyped): untyped =
    ghost:
       result = contractInstance(exceptionName, code)
-
