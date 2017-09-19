@@ -12,9 +12,9 @@ const
   keyInvL = keyInv
 #  keyInvT = keyInv
 
-  ContractKeywordsProc = 
+  ContractKeywordsProc =
     [keyPre, keyPost, keyImpl]
-  ContractKeywordsIter = 
+  ContractKeywordsIter =
     [keyPre, keyInvL, keyPost, keyImpl]
 
 proc asKeyword(node: NimNode): Keyword =

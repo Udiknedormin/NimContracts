@@ -4,7 +4,8 @@
 ## 
 ## Contracts are essentially value counterparts of type-based concepts,
 ## generic bounds, type attributes (e.x. ``not nil``) etc. While they
-## work similarly to assertions, as they throw exceptions when broken,
+## work similarly to assertions, as they throw exceptions when broken
+## and can be disabled (the flag is actually the same),
 ## main reasons for using contracts include elegance of code, clarity
 ## of exception messages, intuitive semantics and ease of analysis,
 ## both for human and external tools.

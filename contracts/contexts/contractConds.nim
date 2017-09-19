@@ -10,7 +10,7 @@ proc contractInstance(exceptionName, code: NimNode): NimNode =
 
       for cond in code:
          let newCond = cond.oldValToIdent
-         let StrRepr = ContractViolatedStr % 
+         let StrRepr = ContractViolatedStr %
             [($cond.toStrLit).unindent(60).replace("\n", " "),
             cond.lineinfo]
 

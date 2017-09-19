@@ -2,8 +2,9 @@
 # Ghost code-related
 #
 
-template ghostly(): untyped = 
-  ## The conditions which should be fulfilled for ghost code to be turned on.
+template ghostly(): untyped =
+  ## The conditions which should be fulfilled for ghost code
+  ## to be turned on.
   compileOption("assertions")
 
 template ghost*(code: untyped): untyped =
@@ -41,7 +42,7 @@ template ghost*(code: untyped): untyped =
   ##  safeClose()
   ##
   ## Ghost code should only be used in other ghost code,
-  ## contracts or any other assertion-lived code. 
+  ## contracts or any other assertion-lived code.
   when ghostly:
     code
 

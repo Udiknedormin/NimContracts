@@ -2,7 +2,7 @@
 # Bind old values with escaping
 #
 
-proc oldValIdentToStr(thisNode: NimNode): string = 
+proc oldValIdentToStr(thisNode: NimNode): string =
   ## Changes old value's identifier to string
   result = "`"
   for child in thisNode.children:

@@ -11,7 +11,7 @@ proc return2breakHelper(code: NimNode): NimNode =
       result = newStmtList(
         newAssignment(ident"result", result[0][1]),
         newNimNode(nnkBreakStmt).add(keyImpl.ident)
-      ) 
+      )
   else:
     for i in 0 ..< result.len:
       result[i] = return2breakHelper(result[i])

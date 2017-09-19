@@ -59,7 +59,7 @@ template ensure* (conds: untyped) =
   ##      all i in 0 ..< s.len: `s`[i] == s[i]
   ##    body:
   ##      result = s.pop
-  ##      
+  ## 
   ## This escaping works for any expression, each one is
   ## evaluated once (which may give unexpected results
   ## for iterators or some other subroutines).
@@ -126,7 +126,7 @@ template promise* (conds: untyped): untyped =
       ["$1($2)" % [$(inst[0]), $(inst[1])]])
   contractInstanceMacro(CustomContractException, conds)
 
-template assume* (conds: untyped): untyped = 
+template assume* (conds: untyped): untyped =
   ## Marks assumptions, i.e. conditions which are always
   ## fulfilled but either are either not deductable from
   ## the code or difficult to be deduced. It's also useful

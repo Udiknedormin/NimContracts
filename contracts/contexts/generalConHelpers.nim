@@ -131,5 +131,4 @@ template callableBase(SyntaxWords, code: untyped,
     newStmts.add(Contracts).add(findContract(implChild[1]))
     result[StmtsIdx] = newStmts
   do:
-    result[StmtsIdx] = findContract(implChild[1]) 
-
+    result[StmtsIdx] = findContract(implChild[1])
