@@ -90,7 +90,8 @@ proc isBoundageDependent(thisNode: NimNode): bool =
     if thisNode.len == 0:
       result = false
     else:
-      result = some(child in thisNode.children, child.isBoundageDependent)
+      result = forsome child in thisNode.children:
+        child.isBoundageDependent
 
 proc markBoundageDependent(thisNode: NimNode): NimNode =
   ## Marks all boundage depended conditions.

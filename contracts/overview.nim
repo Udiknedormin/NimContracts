@@ -129,9 +129,10 @@
 ## Other features
 ## ==============
 ## This module also includes a few non-context tools:
-## - ``ghost`` makes a block of code active only when contracts are turned on
-## - ``each`` and ``some`` represent quantifiers
-## - ``assume`` is used for assumptions for human reader and external tools (no code generated)
+## - ``ghost`` block of code active only when contracts are turned on
+## - ``forall`` and ``forsome`` represent quantifiers
+## - ``assume`` represent assumptions for human reader and external tools
+##       (no code generated)
 ## - ``promise`` makes custom contracts
 ## 
 ##
@@ -144,9 +145,9 @@
 ## for future versions to enable such a feature. In core Nim, it is possible
 ## to inform about what types of exceptions can be throw in the callable.
 ## However, there is no possibility to express what conditions should be
-## met for these exceptions to be thrown. Additionally, it should be possible
-## to specify what conditions will be true if an exception raises (notice they
-## are not necessarily the same conditions).
+## met for these exceptions to be thrown. Additionally, it should be
+## possible to specify what conditions will be true if an exception raises
+## (notice they are not necessarily the same conditions).
 ## 
 ## Object-Oriented Contracts
 ## -------------------------

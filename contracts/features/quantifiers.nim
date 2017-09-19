@@ -2,51 +2,48 @@
 # Declarative programming
 #
 
-template getForLoopElems(code: untyped): untyped =
+proc getForLoopElems(code: NimNode): (NimNode, NimNode) =
   ## Get ``for`` statement's container and element
-  var
-    first  {.inject.}: NimNode
-    second {.inject.}: NimNode
-  if what.kind == nnkInfix:
-    first = what[1]
-    second = what[2]
-  else:
-    first = what[0][2]
-    second = what[0][1]
+  if code.kind != nnkInfix or code[0] != ident("in") or code.len != 3:
+    error("`X in Y` notation expected, found: $1".format(code.repr))
+  result = (code[1], code[2])
 
-macro some* (what, cond: untyped): untyped =
-  ## For-like existential quantifier.
-  ## It works similar to ``any`` from
-  ## `sequtils <http://nim-lang.org/docs/sequtils.html>`_
-  ## module but is more generic.
-  getForLoopElems(what)
-  let decl = newVarStmt(ident"flag", newLit(false))
-  let forStmt = newNimNode(nnkForStmt).
-    add(first).
-    add(second).
-    add(quote do:
-      if `cond`:
-        flag = true
-        break
-    )
-  result = newBlockStmt(newEmptyNode(),
-    newStmtList(decl, forStmt, ident"flag"))
+macro forsome* (what, cond: untyped): untyped =
+  ## For-like existential quantifier with natural syntax.
+  ## It works similar to
+  ## `sequtils.any <http://nim-lang.org/docs/sequtils.html#any>`_
+  ## but is more generic.
+  ##
+  ## .. code-block:: nim
+  ##  require:
+  ##    forsome x in arr: x == key
+  let (first, second) = getForLoopElems(what)
+  template forImpl(fi, sec, cond) =
+    block:
+      var flag = false
+      for fi in sec:
+        if cond:
+          flag = true
+          break
+      flag
+  result = getAst(forImpl(first, second, cond))
 
-macro each* (what, cond: untyped): untyped =
-  ## For-like universal quantifier.
-  ## It works similar to ``all`` from
-  ## `sequtils <http://nim-lang.org/docs/sequtils.html>`_
-  ## module but is more generic.
-  getForLoopElems(what)
-  let decl = newVarStmt(ident"flag", newLit(true))
-  let forStmt = newNimNode(nnkForStmt).
-    add(first).
-    add(second).
-    add(quote do:
-      if not `cond`:
-        flag = false
-        break
-    )
-  result = newBlockStmt(newEmptyNode(),
-    newStmtList(decl, forStmt, ident"flag"))
-
+macro forall* (what, cond: untyped): untyped =
+  ## For-like universal quantifier with natural syntax.
+  ## It works similar to
+  ## `sequtils.all <http://nim-lang.org/docs/sequtils.html#all>`_
+  ## but is more generic.
+  ##
+  ## .. code-block:: nim
+  ##  require:
+  ##    forall x in arr: x > 0
+  let (first, second) = getForLoopElems(what)
+  template forImpl(fi, sec, cond) =
+    block:
+      var flag = true
+      for fi in sec:
+        if not cond:
+          flag = false
+          break
+      flag
+  result = getAst(forImpl(first, second, cond))

@@ -128,8 +128,9 @@ but for the assertion.
 ## Other features
 This module also includes a few non-context tools:
 - ``ghost`` makes a block of code active only when contracts are turned on
-- ``each`` and ``some`` represent quantifiers
-- ``assume`` is used for assumptions for human reader and external tools (no code generated)
+- ``forall`` and ``forsome`` represent quantifiers
+- ``assume`` is used for assumptions for human reader and external tools
+      (no code generated)
 - ``promise`` makes custom contracts
 
 ## Future
