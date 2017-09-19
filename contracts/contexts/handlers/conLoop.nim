@@ -3,6 +3,7 @@
 # Loops
 #
 proc loopContract(thisNode: NimNode): NimNode =
+  warning("Loop contracts are known to be buggy as for now, use with caution.")
   var outContracts: NimNode
   callableBase ContractKeywordsIter:
     outContracts = Contracts.copyNimTree

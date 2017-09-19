@@ -48,6 +48,7 @@ proc yield2yielded(code, conds, binds: NimNode): NimNode =
 
 proc iteratorContract(thisNode: NimNode): NimNode =
   ## Handles contracts for iterators.
+  warning("Loop contracts are known to be buggy as for now, use with caution.")
   callableBase ContractKeywordsIter:
     let invariantChild  = Stmts.findChild($it[0] == keyInvL)
     implChild[1] = return2break(implChild[1])
