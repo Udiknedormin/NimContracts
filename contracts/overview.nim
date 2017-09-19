@@ -54,9 +54,9 @@
 ## Consider finding key's position in a sorted array:
 ## 
 ## .. code-block:: nim
-##  proc bsearch[T](arr: openArray[T], key: T): int =
+##  contractual:
 ##    var a = 0
-##    var b = len(arr)
+##    var b = arr.len-1
 ##    while a < b:
 ##      invariant:
 ##        if key in arr: key in arr[a..b]
@@ -69,7 +69,6 @@
 ##          a = mid + 1
 ##        else:
 ##          b = mid
-##    result = a
 ## 
 ## The first loop invariant is rather obvious. The other one is also
 ## intuitive if we know this module uses '`' character meaning roundly
