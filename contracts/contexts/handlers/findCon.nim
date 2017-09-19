@@ -2,7 +2,7 @@
 #
 # finding contracts
 #
-proc findContract(thisNode: NimNode): NimNode = 
+proc findContract(thisNode: NimNode): NimNode =
   ## Finds contractual entities inside 'contractual' block.
   result = thisNode
   case result.kind:
@@ -22,7 +22,7 @@ proc findContract(thisNode: NimNode): NimNode =
       result[i] = findContract(result[i])
 
 
-macro contractual*(code: untyped): untyped = 
+macro contractual*(code: untyped): untyped =
   ## Creates a block with contractual syntax enabled.
   ## Example:
   ##
@@ -37,7 +37,7 @@ macro contractual*(code: untyped): untyped =
   ## While many contractual features could be possible
   ## without an outside 'contractual' block, it is needed
   ## to check syntax (as one of the main reasons for using
-  ## contracts is for clarity).
+  ## contracts is clarity).
   ##
   ## If future versions of Nim language will enable custom
   ## multi-block macros (similar to if-else), this macro will stop
