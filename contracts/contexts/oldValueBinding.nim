@@ -46,6 +46,17 @@ proc getOldValues(thisNode: NimNode): NimNode =
   if result.len == 0:  # no variables, empty section => remove it entirely
     result = nil
 
+proc updateOldValues(thisNode: NimNode): NimNode =
+  ## Updates old values for iterator or loop.
+  if thisNode.len > 0 and thisNode[0].kind != nnkEmpty:
+    result = newStmtList()
+    for child in thisNode.children:
+      let name = child[0]
+      let value = child[1][1]
+      result.add newCall(bindSym"deepCopy", name, value)
+  else:
+    result = newEmptyNode()
+
 proc boundedFlagDecl(): NimNode {.compileTime.} =
   ## Generates boundedYet flag.
   let sym = genSym(nskVar, "boundedYet")
@@ -63,15 +74,6 @@ proc updateFlag(flag: NimNode, value = newLit(true)): NimNode =
   ## Updates flag given by its symbol to a certain value
   ## (true literal by default).
   result = newAssignment(flag, value)
-
-proc updateOldValues(thisNode: NimNode): NimNode =
-  ## Updates old values for iterator or loop.
-  if thisNode.len > 0 and thisNode[0].kind != nnkEmpty:
-    result = newStmtList()
-    for child in thisNode.children:
-      result.add(newAssignment(child[0], child[1][1]))
-  else:
-    result = newEmptyNode()
 
 proc reduceOldValues(thisNode: NimNode): NimNode =
   ## Reduces repetitions in old values,
