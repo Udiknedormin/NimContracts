@@ -52,17 +52,19 @@ proc iteratorContract(thisNode: NimNode): NimNode =
   contextHandle(thisNode, @ContractKeywordsIter) do (it: Context):
     it.implNode = return2break(it.implNode)
     if it.invNode != nil:
-      let preparationNode = getOldValues(
-        it.invNode, newNimNode(nnkVarSection), true).
-        reduceOldValues
+      let oldValuesDecl = getOldValues(it.invNode).reduceOldValues
+      let boundedFlag = if oldValuesDecl == nil: nil
+                        else: boundedFlagDecl()
       let invariantNode = contractInstance(
         LoopInvariantError.name.ident, it.invNode).
         markBoundageDependent
-      it.preNode.add preparationNode
+      it.preNode.add oldValuesDecl
       it.implNode = yield2yielded(
         it.implNode,
         invariantNode,
-        updateOldValues(preparationNode))
+        updateOldValues(oldValuesDecl))
+      if boundedFlag != nil:
+         it.implNode.add updateFlag(boundedFlag)
     else:
       it.implNode = yield2yielded(
         it.implNode,

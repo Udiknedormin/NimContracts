@@ -1,4 +1,7 @@
 TODO:
+  * fix iterator code generation bug (where code is injected)
+
+DONE:
   * separate object for context handlers' data
-  * fix loop and iterator code generation bug (where code is injected)
-  * simplify `getOldValues` (always Let, `boundedYet` handled separately)
+  * simplify `getOldValues` (always Var, `boundedYet` handled separately)
+  * fix loop code generation bug (where code is injected)

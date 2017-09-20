@@ -149,8 +149,7 @@ proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
            PreConditionError.name.ident, ct.preNode)
 
       if ct.postNode != nil:
-         let preparationNode = getOldValues(
-           ct.postNode, newNimNode(nnkLetSection), false)
+         let preparationNode = getOldValues(ct.postNode)
          let postCondNode = contractInstance(
            PostConditionError.name.ident, ct.postNode)
          ct.postNode = newTree(nnkDefer, postCondNode)
