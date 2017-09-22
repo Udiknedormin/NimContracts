@@ -93,7 +93,6 @@ proc reduceOldValues(thisNode: NimNode): NimNode =
   if result.len == 0:
     result = newEmptyNode()
 
-import future
 proc isBoundageDependent(thisNode: NimNode): bool =
   ## Makes an expression only checked if variable
   ## boundage already happened
