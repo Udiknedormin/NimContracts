@@ -30,7 +30,7 @@
 ##  proc isqrt[T: SomeInteger](x: T): T {.contractual.} =
 ##    require:
 ##      x >= 0
-##    ensure: 
+##    ensure:
 ##      result * result <= x
 ##      (result+1) * (result+1) > x
 ##    body:
@@ -85,8 +85,8 @@
 ## Contractual context
 ## ===================
 ## As already mentioned, for most of this module's features to actually
-## work, the code has to be inside of a ``contractual`` block. For callables,
-## it can be applied as a pragma.
+## work, the code has to be inside of a ``contractual`` block.
+## For callables, it can be applied as a pragma.
 ## 
 ## Syntax:
 ## 
@@ -132,8 +132,19 @@
 ## - ``ghost`` block of code active only when contracts are turned on
 ## - ``forall`` and ``forsome`` represent quantifiers
 ## - ``assume`` represent assumptions for human reader and external tools
-##       (no code generated)
+##   (no code generated)
 ## - ``promise`` makes custom contracts
+##
+## Diagnostics
+## ===========
+## To diagnose contracts, use `explainContracts` compile flag.
+## It provides diagnostic informations about contracts, according to its
+## numerical value:
+## - 0. None (default) --- doesn't show any diagnostics
+## - 1. Output (when flag defined but has no value) --- show final code
+## - 2. Basic --- show both source and final code
+## - 3. Verbose --- as Basic + show each type
+##   of contract detected for the entity (directly or indirectly).
 ##
 ## Future
 ## ======
