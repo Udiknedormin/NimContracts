@@ -1,6 +1,8 @@
 proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
    ghost do:
+      let docs = ct.genDocs()
       ct.explainContractBefore()
+
       if ct.preNode != nil:
          ct.preNode = contractInstance(
            PreConditionError.name.ident, ct.preNode)
@@ -35,6 +37,10 @@ proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
         if ct.kind == EntityKind.blocklike:
           # for `defer` to work properly:
           result = newBlockStmt(result)
+
+      # add generated docs and generate it in the code
+      ct.docsNode.add2docs(docs)
+      result.docs2body(ct.docsNode)
 
       ct.final = result
       ct.explainContractAfter()

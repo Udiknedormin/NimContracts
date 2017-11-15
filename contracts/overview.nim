@@ -135,6 +135,45 @@
 ##   (no code generated)
 ## - ``promise`` makes custom contracts
 ##
+## Documentation
+## =============
+## Contracts can be treated as a part of the signature of the routine
+## or type associated with it. Due to that, this module can generate
+## additional code block for the entity's documentation so that the code
+## would blend in with the signature.
+##
+## Example code:
+##
+## .. code-block:: nim
+##  proc isqrt[T: SomeInteger](x: T): T {.contractual.} =
+##    ## Integer square root function.
+##    require:
+##      x >= 0
+##    ensure:
+##      result >= 0
+##      result * result <= x
+##      (result+1) * (result+1) > x
+##    body:
+##      (T)(x.toBiggestFloat().sqrt().floor().toBiggestInt())
+##
+## Generated docs:
+##
+##   .. code-block:: nim
+##    proc isqrt[T: SomeInteger](x: T): T
+##      require:
+##        x >= 0
+##      ensure:
+##        result >= 0
+##        result * result <= x
+##        (result+1) * (result+1) > x
+##   Integer square root function.
+##
+## Doc comments can be added anywhere between contractual sections,
+## they will be treated just like when written in one place.
+##
+## Contracts docs generation can be disabled using `noContractsDocs`
+## compilation flag.
+##
 ## Diagnostics
 ## ===========
 ## To diagnose contracts, use `explainContracts` compile flag.
@@ -145,6 +184,7 @@
 ## - 2. Basic --- show both source and final code
 ## - 3. Verbose --- as Basic + show each type
 ##   of contract detected for the entity (directly or indirectly).
+##
 ##
 ## Future
 ## ======

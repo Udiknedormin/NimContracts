@@ -42,6 +42,7 @@ type Context = ref object
    sections: seq[Keyword]
    head:     NimNode  # before the implementation
    tail:     NimNode  # implementation (contains all but header)
+   docsNode: NimNode  # docs
    preNode:  NimNode  # pre-conditions
    postNode: NimNode  # post-conditions
    invNode:  NimNode  # invariants
@@ -54,6 +55,17 @@ type Context = ref object
 proc findContract(thisNode: NimNode): NimNode
   ## Finds any occurences of contracts
 
+
+proc findDocs(stmts: NimNode): NimNode =
+   ## Finds all doc-comments in the statement list.
+   var docs = ""
+   for child in stmts.children:
+     if child.kind == nnkCommentStmt:
+       docs.add child.strVal
+       docs.add "\n"
+   if docs != "":
+     docs.delete(docs.len-1, docs.len-1)  # delete last \n
+   result = newCommentStmtNode(docs)
 
 proc findSection(stmts: NimNode, keyword: Keyword): NimNode =
    # Finds a requested section in the statement list.
@@ -77,14 +89,17 @@ proc checkContractual(ct: Context, stmts: NimNode) =
     var child: NimNode
 
     # check if only the right contractual sections are used as children
-    child = stmts.findChild(it.kind == nnkCall and
-                            it[0].kind != nnkIdent or
-                            not it[0].isKeyword)
+    # allow doc comments
+    child = stmts.findChild(it.kind != nnkCommentStmt and
+                            (it.kind == nnkCall and
+                             it[0].kind != nnkIdent or
+                             not it[0].isKeyword))
     if child != nil:
       error(ErrMsgChildNotContractBlock.format(ct.typ, child[0]))
 
     # check if only right contractual keywords are used
-    child = stmts.findChild(it[0].asKeyword notin ct.sections)
+    child = stmts.findChild(it.kind != nnkCommentStmt and
+                            it[0].asKeyword notin ct.sections)
     if child != nil:
       error(ErrMsgWrongUsage.format(ct.typ, child[0]))
 
@@ -92,6 +107,8 @@ proc checkContractual(ct: Context, stmts: NimNode) =
     var idxOfKey    = -2
     var newIdxOfKey = -2
     for child in stmts.children:
+       if child.kind == nnkCommentStmt:
+          continue
        newIdxOfKey = ct.sections.find($child[0])
        if newIdxOfKey <= idxOfKey:
           error(ErrMsgWrongOrder %
@@ -163,6 +180,7 @@ proc newContext(code: NimNode, sections: openArray[Keyword]): Context =
  
    result.head       = newStmtList()
    result.tail       = code
+   result.docsNode   = stmts.findDocs()
    result.preNode    = stmts.findSection(keyPre)
    result.postNode   = stmts.findSection(keyPost)
    result.invNode    = stmts.findSection(keyInvL)
