@@ -2,7 +2,7 @@
 #
 # Loops
 #
-proc loopContract(this: Nim): Nim =
+proc loopContract(this: NimNode): NimNode =
    contextHandle(this, @ContractKeywordsIter) do (it: Context):
       if it.inv != nil:
          let boundedFlag = boundedFlagDecl()

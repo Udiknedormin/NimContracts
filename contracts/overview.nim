@@ -160,9 +160,9 @@
 ##
 ##   .. code-block:: nim
 ##    proc isqrt[T: SomeInteger](x: T): T
-##      require:
+##      requires:
 ##        x >= 0
-##      ensure:
+##      ensures:
 ##        result >= 0
 ##        result * result <= x
 ##        (result+1) * (result+1) > x

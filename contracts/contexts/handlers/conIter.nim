@@ -2,27 +2,27 @@
 #
 # Iterators
 #
-proc return2breakHelper(code: Nim): Nim =
+proc return2breakHelper(code: NimNode): NimNode =
   result = code
   if result.kind == nnkReturnStmt:
     if result[0].kind == nnkEmpty:
-      result = newNimNode(nnkBreakStmt).add(keyImpl.ident)
+      result = newNimNode(nnkBreakStmt).add(newIdentNode(keyImpl.ident))
     else:
       result = newStmtList(
         newAssignment(ident"result", result[0][1]),
-        newNimNode(nnkBreakStmt).add(keyImpl.ident)
+        newNimNode(nnkBreakStmt).add(newIdentNode(keyImpl.ident))
       )
   else:
     for i in 0 ..< result.len:
       result[i] = return2breakHelper(result[i])
 
-proc return2break(code: Nim): Nim =
+proc return2break(code: NimNode): NimNode =
   ## Wrap into 'block body' and adapt 'return' statements.
   result = newNimNode(nnkBlockStmt).
-    add(keyImpl.ident).
+    add(newIdentNode(keyImpl.ident)).
     add(return2breakHelper(code))
 
-proc yieldedVar(code: Nim): Nim =
+proc yieldedVar(code: NimNode): NimNode =
   ## Add 'yielded' variable declaration to iterator.
   result = newNimNode(nnkVarSection).
     add(newNimNode(nnkIdentDefs).
@@ -31,7 +31,7 @@ proc yieldedVar(code: Nim): Nim =
       add(newEmptyNode())
     )
 
-proc yield2yielded(code, conds, binds: Nim): Nim =
+proc yield2yielded(code, conds, binds: NimNode): NimNode =
   ## Add 'yielded' variable to the iterator's 'body',
   ## it works similar to 'result' in procs: contains the yielded value.
   result = code
@@ -46,7 +46,7 @@ proc yield2yielded(code, conds, binds: Nim): Nim =
     for i in 0 ..< result.len:
       result[i] = yield2yielded(result[i], conds, binds)
 
-proc iteratorContract(this: Nim): Nim =
+proc iteratorContract(this: NimNode): NimNode =
   ## Handles contracts for iterators.
   warning("Loop contracts are known to be buggy as for now, use with caution.")
   contextHandle(this, @ContractKeywordsIter) do (it: Context):

@@ -90,7 +90,7 @@ proc add2docs(docs: NimNode, new_docs: string) =
       docs.strVal = "$1\n$2".format(openCode, new_docs)
                             .indent(ExplainIndent)
       if oldDocs != "":
-         docs.strVal &= "\n$3".format(oldDocs)
+         docs.strVal = "$1\n$2".format(docs.strVal, oldDocs)
 
 proc docs2body(tree: NimNode, docs: NimNode) =
    if docs.strVal != "":
