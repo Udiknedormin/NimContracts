@@ -33,17 +33,15 @@ proc infoContractKind(name: string,
    ## kind, code and docs. No extracted documentation!
    if code != nil:
       result[0] = name.indent(ExplainIndent)
-      #code.add newCommentStmtNode("sth!")
-      #echo code.treeRepr
       if code.last.kind == nnkCommentStmt:
          let comm = code.last
          code.del(code.len-1)
-         result[2] = comm.repr.indent(ExplainIndent*2)
+         result[2] = comm.repr
       else:
          result[2] = ""
-      result[1] = code.repr.indent(ExplainIndent*2)
+      result[1] = code.repr
    elif alwaysView:
-      result[0] = "no $1".format(name).indent(ExplainIndent)
+      result[0] = "no $1".format(name)
       result[1] = ""
       result[2] = ""
    else:
@@ -52,17 +50,18 @@ proc infoContractKind(name: string,
 proc strContractsAll(ct: Context, alwaysView = true): string =
    ## Stringify all contracts. No extracted documentation!
    var s = newSeq[(string,string,string)]()
-   s.add infoContractKind("preconditions",  ct.preNode,  alwaysView)
-   s.add infoContractKind("postconditions", ct.postNode, alwaysView)
-   s.add infoContractKind("invariants",     ct.invNode,  alwaysView)
+   for key in ContractKeywordsNormal:
+      if key != keyImpl:
+         s.add infoContractKind(key.docName, ct.sections[key],  alwaysView)
+
    proc formatCK(it: (string,string,string)): string =
       if it[0] == "":
          ""
       elif it[2] == "":
-         "$1:$2".format(it[0], it[1])
+         "$1:$2".format(it[0], it[1].indent(ExplainIndent))
       else:
-         "$1:$2".format(it[0], it[2])
-   s.mapIt(formatCK(it)).join("\n")
+         "$1:$2".format(it[0], it[2][2..].indent(ExplainIndent))
+   s.mapIt(formatCK(it)).filterIt(it != "").join("\n")
 
 proc explainContractBefore(ct: Context) =
    when explainLevel != ExplainLevel.None:
@@ -86,10 +85,11 @@ proc genDocs(ct: Context, alwaysView = false): string =
 proc add2docs(docs: NimNode, new_docs: string) =
    when not defined(noContractsDocs):
       let openCode = ".. code-block:: nim"
-      if docs.strVal != "":
-         docs.strVal = "$1\n$2\n$3".format(openCode, new_docs, docs.strVal)
-      else:
-         docs.strVal = "$1\n$2".format(openCode, new_docs)
+      let oldDocs = docs.strVal
+      docs.strVal = "$1\n$2".format(openCode, new_docs)
+                            .indent(ExplainIndent)
+      if oldDocs != "":
+         docs.strVal &= "\n$3".format(oldDocs)
 
 proc docs2body(tree: NimNode, docs: NimNode) =
    if docs.strVal != "":

@@ -16,6 +16,8 @@ const
     [keyPre, keyPost, keyImpl]
   ContractKeywordsIter =
     [keyPre, keyInvL, keyPost, keyImpl]
+  ContractKeywordsNormal =
+    [keyPre, keyInvL, keyPost, keyImpl]
 
 proc asKeyword(node: NimNode): Keyword =
   case $node:
@@ -36,3 +38,24 @@ proc isKeyword(node: NimNode): bool =
   node.asKeyword != keyNone
 
 converter toString(k: Keyword): string = $k
+
+proc docName(k: Keyword): string =
+  case k:
+    of keyPre:  "requires"
+    of keyPost: "ensures"
+    of keyInv:  "invariants"
+    of keyCust: "promises"
+    of keyImpl: "body"
+    of keyNone: ""
+
+proc fieldName(k: Keyword): string =
+  case k:
+    of keyPre:  "pre"
+    of keyPost: "post"
+    of keyInv:  "inv"
+    of keyCust: "cust"
+    of keyImpl: "impl"
+    of keyNone: ""
+
+proc ident(k: Keyword): NimIdent {.compileTime.} =
+  !("key_" & k.fieldName)

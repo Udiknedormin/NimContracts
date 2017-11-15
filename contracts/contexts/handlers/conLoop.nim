@@ -2,19 +2,19 @@
 #
 # Loops
 #
-proc loopContract(thisNode: NimNode): NimNode =
-   contextHandle(thisNode, @ContractKeywordsIter) do (it: Context):
-      if it.invNode != nil:
+proc loopContract(this: Nim): Nim =
+   contextHandle(this, @ContractKeywordsIter) do (it: Context):
+      if it.inv != nil:
          let boundedFlag = boundedFlagDecl()
-         let oldValuesDecl = getOldValues(it.invNode).reduceOldValues
-         it.invNode = contractInstance(
-           LoopInvariantError.name.ident, it.invNode).
+         let oldValuesDecl = getOldValues(it.inv).reduceOldValues
+         it.inv = contractInstance(
+           LoopInvariantError.name.ident, it.inv).
            markBoundageDependent(boundedFlag.getFlagSym)
-         it.implNode.add it.invNode
+         it.impl.add it.inv
          if oldValuesDecl != nil:
-            if it.preNode == nil:
-               it.preNode = newStmtList()
-            it.preNode.add oldValuesDecl
-            it.preNode.add boundedFlag
-            it.implNode.add updateOldValues(oldValuesDecl)
-            it.implNode.add updateFlag(boundedFlag.getFlagSym)
+            if it.pre == nil:
+               it.pre = newStmtList()
+            it.pre.add oldValuesDecl
+            it.pre.add boundedFlag
+            it.impl.add updateOldValues(oldValuesDecl)
+            it.impl.add updateFlag(boundedFlag.getFlagSym)

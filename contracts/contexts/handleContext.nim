@@ -3,29 +3,29 @@ proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
       let docs = ct.genDocs()
       ct.explainContractBefore()
 
-      if ct.preNode != nil:
-         ct.preNode = contractInstance(
-           PreConditionError.name.ident, ct.preNode)
+      if ct.pre != nil:
+         ct.pre = contractInstance(
+           PreConditionError.name.ident, ct.pre)
 
-      if ct.postNode != nil:
-         let preparationNode = getOldValues(ct.postNode)
+      if ct.post != nil:
+         let preparationNode = getOldValues(ct.post)
          let postCondNode = contractInstance(
-           PostConditionError.name.ident, ct.postNode)
-         ct.postNode = newTree(nnkDefer, postCondNode)
+           PostConditionError.name.ident, ct.post)
+         ct.post = newTree(nnkDefer, postCondNode)
          ct.head.add preparationNode.reduceOldValues
 
       ct.handler()  # notice invariant MUST be included in impl!
 
       result = newStmtList(ct.head)
 
-      if ct.preNode != nil:
-         result.add ct.preNode
+      if ct.pre != nil:
+         result.add ct.pre
 
-      if ct.postNode != nil:  # using defer
-         result.add ct.postNode
+      if ct.post != nil:  # using defer
+         result.add ct.post
 
       let stmtsIdx = ct.tail.findChildIdx(it.kind == nnkStmtList)
-      ct.tail[stmtsIdx] = findContract(ct.implNode)
+      ct.tail[stmtsIdx] = findContract(ct.impl)
 
       if ct.kind == EntityKind.declaration:
         let tmp = ct.tail[stmtsIdx]
@@ -47,7 +47,7 @@ proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
 
    do:
       let stmtsIdx = ct.tail.findChildIdx(it.kind == nnkStmtList)
-      result[stmtsIdx] = findContract(ct.implNode)
+      result[stmtsIdx] = findContract(ct.impl)
     
 
 proc contextHandle(code: NimNode,

@@ -39,14 +39,11 @@ type Context = ref object
    name:     string
    typ:      EntityType
    kind:     EntityKind
-   sections: seq[Keyword]
+   secNames: seq[Keyword]
    head:     NimNode  # before the implementation
    tail:     NimNode  # implementation (contains all but header)
    docsNode: NimNode  # docs
-   preNode:  NimNode  # pre-conditions
-   postNode: NimNode  # post-conditions
-   invNode:  NimNode  # invariants
-   implNode: NimNode  # implementation (body)
+   sections: Table[Keyword, NimNode]  # sections
    original: NimNode  # original source
    final:    NimNode  # final code
 
@@ -99,7 +96,7 @@ proc checkContractual(ct: Context, stmts: NimNode) =
 
     # check if only right contractual keywords are used
     child = stmts.findChild(it.kind != nnkCommentStmt and
-                            it[0].asKeyword notin ct.sections)
+                            it[0].asKeyword notin ct.secNames)
     if child != nil:
       error(ErrMsgWrongUsage.format(ct.typ, child[0]))
 
@@ -109,13 +106,13 @@ proc checkContractual(ct: Context, stmts: NimNode) =
     for child in stmts.children:
        if child.kind == nnkCommentStmt:
           continue
-       newIdxOfKey = ct.sections.find($child[0])
+       newIdxOfKey = ct.secNames.find($child[0])
        if newIdxOfKey <= idxOfKey:
           error(ErrMsgWrongOrder %
-            [$ct.typ, $child[0], ct.sections[idxOfKey]])
+            [$ct.typ, $child[0], ct.secNames[idxOfKey]])
        if newIdxOfKey == idxOfKey:
           error(ErrMsgDuplicate %
-            [$ct.typ, ct.sections[idxOfKey]])
+            [$ct.typ, ct.secNames[idxOfKey]])
        idxOfKey = newIdxOfKey
 
 proc entityType(thisNode: NimNode): EntityType =
@@ -175,15 +172,32 @@ proc newContext(code: NimNode, sections: openArray[Keyword]): Context =
    result.typ  = code.entityType
    result.kind = result.typ.entityKind
    result.name = getEntityName(code, result.typ)
-   result.sections = @sections
+   result.secNames = @sections
    checkContractual(result, stmts)
  
    result.head       = newStmtList()
    result.tail       = code
    result.docsNode   = stmts.findDocs()
-   result.preNode    = stmts.findSection(keyPre)
-   result.postNode   = stmts.findSection(keyPost)
-   result.invNode    = stmts.findSection(keyInvL)
-   result.implNode   = stmts.findSection(keyImpl)
+   result.sections   = initTable[Keyword, NimNode]()
+   for key in ContractKeywordsNormal:
+      result.sections.add(key, stmts.findSection(key))
    result.original   = code.copyNimTree
    result.final      = nil
+
+iterator sections(ct: Context): (Keyword, NimNode) =
+   ## Iterates over all sections from a context, including implementation.
+   for key, value in ct.sections:
+      yield (key, value)
+
+
+template sectionProperty(name, key) =
+   proc name(ct: Context): NimNode  = ct.sections[key]
+   proc `name =`(ct: Context, val: NimNode) =
+      ct.sections[key] = val
+
+macro genSectionProperties(): untyped =
+   result = newStmtList()
+   for key in ContractKeywordsNormal:
+      result.add getAst(sectionProperty(!key.fieldName, key.ident))
+
+genSectionProperties()

@@ -2,7 +2,7 @@
 #
 # Iterators
 #
-proc return2breakHelper(code: NimNode): NimNode =
+proc return2breakHelper(code: Nim): Nim =
   result = code
   if result.kind == nnkReturnStmt:
     if result[0].kind == nnkEmpty:
@@ -16,13 +16,13 @@ proc return2breakHelper(code: NimNode): NimNode =
     for i in 0 ..< result.len:
       result[i] = return2breakHelper(result[i])
 
-proc return2break(code: NimNode): NimNode =
+proc return2break(code: Nim): Nim =
   ## Wrap into 'block body' and adapt 'return' statements.
   result = newNimNode(nnkBlockStmt).
     add(keyImpl.ident).
     add(return2breakHelper(code))
 
-proc yieldedVar(code: NimNode): NimNode =
+proc yieldedVar(code: Nim): Nim =
   ## Add 'yielded' variable declaration to iterator.
   result = newNimNode(nnkVarSection).
     add(newNimNode(nnkIdentDefs).
@@ -31,7 +31,7 @@ proc yieldedVar(code: NimNode): NimNode =
       add(newEmptyNode())
     )
 
-proc yield2yielded(code, conds, binds: NimNode): NimNode =
+proc yield2yielded(code, conds, binds: Nim): Nim =
   ## Add 'yielded' variable to the iterator's 'body',
   ## it works similar to 'result' in procs: contains the yielded value.
   result = code
@@ -46,29 +46,29 @@ proc yield2yielded(code, conds, binds: NimNode): NimNode =
     for i in 0 ..< result.len:
       result[i] = yield2yielded(result[i], conds, binds)
 
-proc iteratorContract(thisNode: NimNode): NimNode =
+proc iteratorContract(this: Nim): Nim =
   ## Handles contracts for iterators.
   warning("Loop contracts are known to be buggy as for now, use with caution.")
-  contextHandle(thisNode, @ContractKeywordsIter) do (it: Context):
-    it.implNode = return2break(it.implNode)
-    if it.invNode != nil:
-      let oldValuesDecl = getOldValues(it.invNode).reduceOldValues
+  contextHandle(this, @ContractKeywordsIter) do (it: Context):
+    it.impl = return2break(it.impl)
+    if it.inv != nil:
+      let oldValuesDecl = getOldValues(it.inv).reduceOldValues
       let boundedFlag = if oldValuesDecl == nil: nil
                         else: boundedFlagDecl()
-      let invariantNode = contractInstance(
-        LoopInvariantError.name.ident, it.invNode).
+      let invariant = contractInstance(
+        LoopInvariantError.name.ident, it.inv).
         markBoundageDependent
-      it.preNode.add oldValuesDecl
-      it.implNode = yield2yielded(
-        it.implNode,
-        invariantNode,
+      it.pre.add oldValuesDecl
+      it.impl = yield2yielded(
+        it.impl,
+        invariant,
         updateOldValues(oldValuesDecl))
       if boundedFlag != nil:
-         it.implNode.add updateFlag(boundedFlag)
+         it.impl.add updateFlag(boundedFlag)
     else:
-      it.implNode = yield2yielded(
-        it.implNode,
+      it.impl = yield2yielded(
+        it.impl,
         newEmptyNode(),
         newEmptyNode())
-    it.implNode.add thisNode.yieldedVar
+    it.impl.add this.yieldedVar
 
