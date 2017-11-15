@@ -26,42 +26,43 @@ const explainLevel =
       ExplainLevel.None
 
 
-proc infoContractKind(name: string,
-                      code: NimNode,
-                      alwaysView = true): (string, string, string) =
-   ## Stringify a ceratin kind of a contract into a tuple of
-   ## kind, code and docs. No extracted documentation!
-   if code != nil:
-      result[0] = name.indent(ExplainIndent)
-      if code.last.kind == nnkCommentStmt:
-         let comm = code.last
-         code.del(code.len-1)
-         result[2] = comm.repr
-      else:
-         result[2] = ""
-      result[1] = code.repr
-   elif alwaysView:
-      result[0] = "no $1".format(name)
-      result[1] = ""
-      result[2] = ""
-   else:
-      result = ("","","")
+## Contract section docs information.
+type ContractSectionInfo = object
+   key:     Keyword
+   code:    NimNode
+   comment: NimNode
 
-proc strContractsAll(ct: Context, alwaysView = true): string =
+proc `$`(csi: ContractSectionInfo, alwaysView = true): string =
+  if csi.code == nil:
+     if alwaysView:
+        "no $1".format(csi.key.docName)
+     else:
+        ""
+  elif csi.comment == nil:
+     "$1:$2".format(csi.key.docName,
+                    csi.code.repr)
+  else:
+     var comm = csi.comment.repr
+     if comm[2] == ' ':
+        comm.delete(0, 2)
+     else:
+        comm.delete(0, 1)
+     "$1:\n$2".format(csi.key.docName,
+                      comm.indent(ExplainIndent))
+
+proc strContractsAll(ct: Context, alwaysView = false): string =
    ## Stringify all contracts. No extracted documentation!
-   var s = newSeq[(string,string,string)]()
+   var s = newSeq[ContractSectionInfo]()
    for key in ContractKeywordsNormal:
       if key != keyImpl:
-         s.add infoContractKind(key.docName, ct.sections[key],  alwaysView)
-
-   proc formatCK(it: (string,string,string)): string =
-      if it[0] == "":
-         ""
-      elif it[2] == "":
-         "$1:$2".format(it[0], it[1].indent(ExplainIndent))
-      else:
-         "$1:$2".format(it[0], it[2][2..].indent(ExplainIndent))
-   s.mapIt(formatCK(it)).filterIt(it != "").join("\n")
+         # Due to a bug in Nim's AST system, comments are not present
+         # in AST for `EXPR  ## COMM`.
+         s.add ContractSectionInfo(key:     key,
+                                   code:    ct.sections[key],
+                                   comment: nil)
+   s.mapIt(`$`(it, alwaysView))
+    .filterIt(it != "")
+    .join("\n")
 
 proc explainContractBefore(ct: Context) =
    when explainLevel != ExplainLevel.None:
@@ -71,7 +72,7 @@ proc explainContractBefore(ct: Context) =
       echo "original code:".indent(ExplainIndent)
       echo ct.original.repr.indent(ExplainIndent*2)
    when explainLevel == ExplainLevel.Verbose:
-      echo ct.strContractsAll()
+      echo ct.strContractsAll(alwaysView = true).indent(ExplainIndent)
 
 proc explainContractAfter(ct: Context) =
    when explainLevel != ExplainLevel.None:

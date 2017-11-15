@@ -1,7 +1,10 @@
 TODO:
   * fix iterator code generation bug (where code is injected)
+  * add type invariants
+  * more oop for docs generation
 
 DONE:
   * separate object for context handlers' data
   * simplify `getOldValues` (always Var, `boundedYet` handled separately)
   * fix loop code generation bug (where code is injected)
+  * add docs generation
