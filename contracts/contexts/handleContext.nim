@@ -39,8 +39,9 @@ proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
           result = newBlockStmt(result)
 
       # add generated docs and generate it in the code
-      ct.docsNode.add2docs(docs)
-      result.docs2body(ct.docsNode)
+      if ct.kind != EntityKind.blocklike:
+        ct.docsNode.add2docs(docs)
+        result.docs2body(ct.docsNode)
 
       ct.final = result
       ct.explainContractAfter()
@@ -48,7 +49,7 @@ proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
    do:
       let stmtsIdx = ct.tail.findChildIdx(it.kind == nnkStmtList)
       result[stmtsIdx] = findContract(ct.impl)
-    
+
 
 proc contextHandle(code: NimNode,
                    sections: openArray[Keyword],
