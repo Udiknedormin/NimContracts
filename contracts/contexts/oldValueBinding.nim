@@ -62,7 +62,10 @@ proc boundedFlagDecl(): NimNode {.compileTime.} =
   let sym = genSym(nskVar, "boundedYet")
   template decl(sym) =
     var sym = false
-  result = getAst(decl(sym))[0]
+  result = getAst(decl(sym))
+  if result.kind == nnkStmtList:  # to get around the difference
+                                  # in parsing on Nim stable and devel
+    result = result[0]
 
 proc getFlagSym(flag: NimNode): NimNode =
   ## Gets flag symbol given its declaration.
