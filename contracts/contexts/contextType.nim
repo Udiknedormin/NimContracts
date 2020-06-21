@@ -46,6 +46,7 @@ type Context = ref object
    sections: Table[Keyword, NimNode]  # sections
    original: NimNode  # original source
    final:    NimNode  # final code
+   olds: NimNode      # old/previous values
 
 
 # forward-declaration
