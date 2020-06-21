@@ -2,6 +2,9 @@
 # Bind old values with escaping
 #
 
+import deepCopyPolyfill
+
+
 proc oldValIdentToStr(thisNode: NimNode): string =
   ## Changes old value's identifier to string
   result = "`"
@@ -53,9 +56,7 @@ proc updateOldValues(thisNode: NimNode): NimNode =
     for child in thisNode.children:
       let name = child[0]
       let value = child[1][1]
-      template updateSingle(name, value) =
-        system.deepCopy(name, value)
-      result.add getAst(updateSingle(name, value))
+      result.add getAst(systemDeepCopy(name, value))
   else:
     result = newEmptyNode()
 
