@@ -15,6 +15,15 @@ As usage of this module isn't typical and some extra rules are
 applied, aside from documentation for each of module's elements
 the description of the module as a whole is included.
 
+## Where could I hear about it?
+Contracts and static analysis were briefly mentioned in
+[June 8th 2020 Nim blog post](https://nim-lang.org/blog/2020/06/08/static-analysis.html)
+and
+[Nim v1.2.0 changelog](https://nim-lang.org/blog/2020/04/03/version-120-released.html)
+(it actually uses similar names, `requires` vs `require`).
+[DrNim (by Araq)](https://nim-lang.org/docs/drnim.html)
+project uses such concepts too.
+
 ## Hello contracts
 For most of the features of this module, ``contractual`` macro should
 be used. As it generates exception-raising code, some exceptions
@@ -214,3 +223,19 @@ rules. For now, user should follow them manually.
 |  pre-condition |    added    | alternative |
 | loop invariant |    added    |    added    |
 | post-condition |    added    |    added    |
+
+
+
+## Comparison to other libraries
+
+### Nim built-in pragmas
+
+Nim itself defines some contract pragmas, including `requires`, `ensures`,
+`assume`, `assert`, `invariant`. Note how many of them are very similar to
+those used by Contracts. However, these do not generate any runtime checks
+and are there only to be inspected by external tools. In comparison,
+Contracts actually generates runtime checks with meaningful errors.
+
+If some tooling starts actually using these pragmas, Contracts might get an
+option to inject these pragmas too, so that external tooling can use them.
+
