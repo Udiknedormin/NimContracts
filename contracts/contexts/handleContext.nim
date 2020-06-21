@@ -8,15 +8,18 @@ proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
            PreConditionError.name.ident, ct.pre)
 
       if ct.post != nil:
-         let preparationNode = getOldValues(ct.post)
+         let preparationNode = getOldValues(ct.post).reduceOldValues
          let postCondNode = contractInstance(
            PostConditionError.name.ident, ct.post)
          ct.post = newTree(nnkDefer, postCondNode)
-         ct.head.add preparationNode.reduceOldValues
+         ct.olds = preparationNode
 
       ct.handler()  # notice invariant MUST be included in impl!
 
       result = newStmtList(ct.head)
+
+      if ct.olds != nil:
+         result.add ct.olds
 
       if ct.pre != nil:
          result.add ct.pre

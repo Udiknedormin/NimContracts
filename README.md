@@ -73,7 +73,8 @@ Consider finding key's position in a sorted array:
 
 The first loop invariant is rather obvious. The other one is also
 intuitive if we know this module uses '`' character meaning roundly
-"previously" (in last iteration or yield). Actually, we could
+"previously" (in last iteration or yield, can also be used in postconditions
+to refer to values seen by preconditions). Actually, we could
 strengthen our invariants by adding information about how fast
 the range shrinks but it's not necessary to prove the algorithm
 works (although it is needed to prove how efficient it is).
@@ -184,6 +185,12 @@ numerical value:
 - 2: Basic --- show both source and final code
 - 3: Verbose --- as Basic + show each type
     of contract detected for the entity (directly or indirectly).
+
+## Non-obvious goodies
+Nim has an undocumented problem with JS `deepCopy` implementation lacking.
+Contracts uses its own implementation of `deepCopy` for JS backend, thus
+solving the problem. Thanks to that, "previous values" can be used on JS
+backend just like on C or C++ ones.
 
 
 ## Future
