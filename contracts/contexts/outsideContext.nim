@@ -126,7 +126,7 @@ template promise* (conds: untyped): untyped =
       ["$1($2)" % [$(inst[0]), $(inst[1])]])
   contractInstanceMacro(CustomContractException, conds)
 
-template assume* (conds: untyped): untyped =
+template assume* (conds: typed): untyped =
   ## Marks assumptions, i.e. conditions which are always
   ## fulfilled but either are either not deductable from
   ## the code or difficult to be deduced. It's also useful
