@@ -239,3 +239,101 @@ Contracts actually generates runtime checks with meaningful errors.
 If some tooling starts actually using these pragmas, Contracts might get an
 option to inject these pragmas too, so that external tooling can use them.
 
+
+### Contra
+
+Contra is overall a much more minimalistic project when it comes to
+contracts, both feature-wise and user-experience-wise. Listing the
+differences briefly:
+* foolproofness
+  * Contra asks the user to use particular code order (preconditions, then
+    postconditions, then main code). Contracts actually enforces these
+    rules.
+  * Contra errors on import for unsuported targets. Contracts only errors
+    if the user uses features that cannot be supported on the given target,
+    and when it does, it generates a meaningful error message.
+* types of contracts
+  * Contra only provides preconditions and postconditions for procs
+    and iterators. Contracts also have loop and iterator invariants (and
+    some plans for object and methods inheritance support).
+  * Contra doesn't provide the "old/previous value" feature. Contracts does.
+  * Contra can only handle unconditional contracts, i.e. returning bools.
+    Contracts can also handle conditional contracts (functionally equivalent
+    to `if contract_cond: cond else: true`, but semantically different).
+* documentation
+  * Contra can only generate documentation for preconditions (and only
+    in some cases). Contracts generate documentation for all signature-like
+    contracts (preconditions, postconditions, invariants) by default.
+* errors
+  * Contra uses `AssertionError`. Contracts uses a separate error type
+    hierarchy with separate types for e.g. preconditions and postconditions.
+    That way, the user can treat caller errors (i.e. breaking preconditions)
+    differently from the provider errors (i.e. breaking postconditions).
+  * Contra only shows the number of contract that has been broken and only
+    stringifies the condition for preconditions. Contracts stringifies all
+    the contracts in its error messages.
+  * Contra only shows the location of the contract's code when abused.
+    Contracts provides it for all contracts by default.
+* additional contract-related features
+  * Contra doesn't have "ghost code" feature (i.e. code that is only
+    generated if runtime contracts checks are enabled), although the user
+    can replicate it with a `when defined(contracts):` statement. Contracts
+    does and actually implements `ghost` in a similar way.
+  * Contra doesn't define any contract-related helper functions, such as
+    `forall` and `forsome` (although `sequtils.allIt` and `sequtils.anyIt`
+    can be used). Contracts does.
+* other features
+  * Contra defines some debug printing optimizations with term rewriting.
+    Contracts does not, it's a library purely for design-by-contract.
+  * Contra defines some assert-and-print-generated-code funcionality.
+    Contracts does not, it's a high-level library.
+  * Contra defines some immutability-related tools.
+    Contracts does not, it's programming style-agnostic.
+  
+
+#### FAQ
+
+* What about `assume` blocks?
+** Contra: Assume blocks produce no code at all and are only meant for
+   human reading only, you can do that using discard or similar contruct
+   on Nim. KISS.
+** Contracts: False. `assume` blocks are for both humans and static analysis
+   tools. They are also checked semantically and type-wise, unlike comments
+   or strings, but generate no code whatsoever, unlike actual code put in
+   discard (which can but doesn't have to be optimised away). What's more,
+   no static analysis tool can just guess than some string or discard is
+   assumed to represent an assumption. Unless it's marked by a variable's
+   name or a comment, human readers can't always do that either.
+* What about `body` blocks?
+** Contra: does NOT uses nor needs body blocks.
+** Contracts: does not in fact "need" them. They are used mostly for
+   aesthetic reasons and user experience of users coming from languages that
+   use them, like Ada or Cobra. It may even get optional in future releases.
+* What about `invariant` blocks?
+** Contra: You can pass Invariants on the `postconditions` block.
+** Contracts: False. Invariants only make sense for loops and iterators (for
+   procs they're essentially just copying the same condition as both
+   precondition and postcondition). Both libraries implement postconditions
+   with a `defer` statement, which means it only runs after the return, not
+   after each `yield`, like an `invariant` is supposed to.
+* What about `forall` and `forsome` blocks?
+** Contra: Use `sequtils.filterIt`, `sequtils.mapIt`, `sequtils.keepItIf`,
+   `sequtils.allIt`, `sequtils.anyIt`, etc.
+** Contracts: True. `forall` and `forsome` are implementation-wise very
+   close to `sequtils.allIt` and `sequtils.anyIt` (even their documentation
+   say so). They were created first and foremost to improve readability,
+   because Contracts assumes the more readable and self-explanatory
+   the better, especially considering it's part of the docs. It also
+   improves user experience for users coming from language which have such
+   features, e.g. Ada and Cobra.
+* What about `ghost` block?
+** Contra: Use `when defined(release):` or `when defined(contracts):`
+** Contracts: True. `ghost` is actually implemented as `when ghostly():`.
+   Introducing it serves two main reasons: to make it usable as a pragma
+   and to improve user experience for users coming from Ada, which supports
+   `ghost`.
+* Whats the performance and speed cost of using Contra and Contracts?
+** Contra: Zero cost at runtime, since it produces no code at all when build
+   for Release.
+** Contracts: True for both, the approach is very similar.
+
