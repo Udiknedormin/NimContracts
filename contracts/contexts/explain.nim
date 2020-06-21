@@ -35,20 +35,21 @@ type ContractSectionInfo = object
 proc `$`(csi: ContractSectionInfo, alwaysView = true): string =
   if csi.code == nil:
      if alwaysView:
-        "no $1".format(csi.key.docName)
+        result = "no $1".format(csi.key.docName)
      else:
-        ""
+        result = ""
   elif csi.comment == nil:
-     "$1:$2".format(csi.key.docName,
-                    csi.code.repr)
+     result = csi.key.docName & ":\n"
+     for expr in csi.code:
+       result &= ("\n\n" & expr.repr).indent(ExplainIndent)
   else:
      var comm = csi.comment.repr
      if comm[2] == ' ':
         comm.delete(0, 2)
      else:
         comm.delete(0, 1)
-     "$1:\n$2".format(csi.key.docName,
-                      comm.indent(ExplainIndent))
+     result = "$1:\n$2".format(csi.key.docName,
+                               comm.indent(ExplainIndent))
 
 proc strContractsAll(ct: Context, alwaysView = false): string =
    ## Stringify all contracts. No extracted documentation!
@@ -62,7 +63,7 @@ proc strContractsAll(ct: Context, alwaysView = false): string =
                                    comment: nil)
    s.mapIt(`$`(it, alwaysView))
     .filterIt(it != "")
-    .join("\n")
+    .join("\n\n")
 
 proc explainContractBefore(ct: Context) =
    when explainLevel != ExplainLevel.None:
@@ -88,7 +89,6 @@ proc add2docs(docs: NimNode, new_docs: string) =
       let openCode = ".. code-block:: nim"
       let oldDocs = docs.strVal
       docs.strVal = "$1\n$2".format(openCode, new_docs)
-                            .indent(ExplainIndent)
       if oldDocs != "":
          docs.strVal = "$1\n$2".format(docs.strVal, oldDocs)
 
