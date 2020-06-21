@@ -13,7 +13,7 @@ elif defined(js):
   template systemDeepCopy*(y): untyped = deepCopy(y)
   template systemDeepCopy*(x, y) = deepCopy(x, y)
 else:
-  {.error: "Target does not support deepCopy, shallow copy used instead!".}
+  {.warning: "Target does not support deepCopy, shallow copy used instead!".}
   template systemDeepCopy*(y): untyped = y
   template systemDeepCopy*(x, y) =
     x = y
