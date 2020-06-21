@@ -1,3 +1,6 @@
+from macros import error
+
+
 when declared(deepCopy):
   template systemDeepCopy*(y): untyped = system.deepCopy(y)
   template systemDeepCopy*(x, y) = system.deepCopy(x, y)
@@ -13,7 +16,8 @@ elif defined(js):
   template systemDeepCopy*(y): untyped = deepCopy(y)
   template systemDeepCopy*(x, y) = deepCopy(x, y)
 else:
-  {.error: "Target does not support deepCopy, shallow copy used instead!".}
+  {.warning: "Target does not support deepCopy, shallow copy used instead!".}
   template systemDeepCopy*(y): untyped = y
   template systemDeepCopy*(x, y) =
+    error: "Target does not support deepCopy, but 'old values' used!"
     x = y
