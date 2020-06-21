@@ -53,7 +53,9 @@ proc updateOldValues(thisNode: NimNode): NimNode =
     for child in thisNode.children:
       let name = child[0]
       let value = child[1][1]
-      result.add newCall(bindSym"deepCopy", name, value)
+      template updateSingle(name, value) =
+        system.deepCopy(name, value)
+      result.add getAst(updateSingle(name, value))
   else:
     result = newEmptyNode()
 
