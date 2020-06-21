@@ -41,11 +41,11 @@ converter toString(k: Keyword): string = $k
 
 proc docName(k: Keyword): string =
   case k:
-    of keyPre:  "requires"
-    of keyPost: "ensures"
-    of keyInv:  "invariants"
-    of keyCust: "promises"
-    of keyImpl: "body"
+    of keyPre:  "Requires"
+    of keyPost: "Ensures"
+    of keyInv:  "Invariants"
+    of keyCust: "Promises"
+    of keyImpl: "Body"
     of keyNone: ""
 
 proc fieldName(k: Keyword): string =
