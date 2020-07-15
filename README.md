@@ -294,46 +294,46 @@ differences briefly:
 #### FAQ
 
 * What about `assume` blocks?
-** Contra: Assume blocks produce no code at all and are only meant for
-   human reading only, you can do that using discard or similar contruct
-   on Nim. KISS.
-** Contracts: False. `assume` blocks are for both humans and static analysis
-   tools. They are also checked semantically and type-wise, unlike comments
-   or strings, but generate no code whatsoever, unlike actual code put in
-   discard (which can but doesn't have to be optimised away). What's more,
-   no static analysis tool can just guess than some string or discard is
-   assumed to represent an assumption. Unless it's marked by a variable's
-   name or a comment, human readers can't always do that either.
+  * Contra: Assume blocks produce no code at all and are only meant for
+    human reading only, you can do that using discard or similar contruct
+    on Nim. KISS.
+  * Contracts: False. `assume` blocks are for both humans and static analysis
+    tools. They are also checked semantically and type-wise, unlike comments
+    or strings, but generate no code whatsoever, unlike actual code put in
+    discard (which can but doesn't have to be optimised away). What's more,
+    no static analysis tool can just guess than some string or discard is
+    assumed to represent an assumption. Unless it's marked by a variable's
+    name or a comment, human readers can't always do that either.
 * What about `body` blocks?
-** Contra: does NOT uses nor needs body blocks.
-** Contracts: does not in fact "need" them. They are used mostly for
-   aesthetic reasons and user experience of users coming from languages that
-   use them, like Ada or Cobra. It may even get optional in future releases.
+  * Contra: does NOT uses nor needs body blocks.
+  * Contracts: does not in fact "need" them. They are used mostly for
+    aesthetic reasons and user experience of users coming from languages that
+    use them, like Ada or Cobra. It may even get optional in future releases.
 * What about `invariant` blocks?
-** Contra: You can pass Invariants on the `postconditions` block.
-** Contracts: False. Invariants only make sense for loops and iterators (for
-   procs they're essentially just copying the same condition as both
-   precondition and postcondition). Both libraries implement postconditions
-   with a `defer` statement, which means it only runs after the return, not
-   after each `yield`, like an `invariant` is supposed to.
+  * Contra: You can pass Invariants on the `postconditions` block.
+  * Contracts: False. Invariants only make sense for loops and iterators (for
+    procs they're essentially just copying the same condition as both
+    precondition and postcondition). Both libraries implement postconditions
+    with a `defer` statement, which means it only runs after the return, not
+    after each `yield`, like an `invariant` is supposed to.
 * What about `forall` and `forsome` blocks?
-** Contra: Use `sequtils.filterIt`, `sequtils.mapIt`, `sequtils.keepItIf`,
-   `sequtils.allIt`, `sequtils.anyIt`, etc.
-** Contracts: True. `forall` and `forsome` are implementation-wise very
-   close to `sequtils.allIt` and `sequtils.anyIt` (even their documentation
-   say so). They were created first and foremost to improve readability,
-   because Contracts assumes the more readable and self-explanatory
-   the better, especially considering it's part of the docs. It also
-   improves user experience for users coming from language which have such
-   features, e.g. Ada and Cobra.
+  * Contra: Use `sequtils.filterIt`, `sequtils.mapIt`, `sequtils.keepItIf`,
+    `sequtils.allIt`, `sequtils.anyIt`, etc.
+  * Contracts: True. `forall` and `forsome` are implementation-wise very
+    close to `sequtils.allIt` and `sequtils.anyIt` (even their documentation
+    say so). They were created first and foremost to improve readability,
+    because Contracts assumes the more readable and self-explanatory
+    the better, especially considering it's part of the docs. It also
+    improves user experience for users coming from language which have such
+    features, e.g. Ada and Cobra.
 * What about `ghost` block?
-** Contra: Use `when defined(release):` or `when defined(contracts):`
-** Contracts: True. `ghost` is actually implemented as `when ghostly():`.
-   Introducing it serves two main reasons: to make it usable as a pragma
-   and to improve user experience for users coming from Ada, which supports
-   `ghost`.
+  * Contra: Use `when defined(release):` or `when defined(contracts):`
+  * Contracts: True. `ghost` is actually implemented as `when ghostly():`.
+    Introducing it serves two main reasons: to make it usable as a pragma
+    and to improve user experience for users coming from Ada, which supports
+    `ghost`.
 * Whats the performance and speed cost of using Contra and Contracts?
-** Contra: Zero cost at runtime, since it produces no code at all when build
-   for Release.
-** Contracts: True for both, the approach is very similar.
+  * Contra: Zero cost at runtime, since it produces no code at all when build
+    for Release.
+  * Contracts: True for both, the approach is very similar.
 
