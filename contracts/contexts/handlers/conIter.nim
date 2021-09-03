@@ -6,11 +6,11 @@ proc return2breakHelper(code: NimNode): NimNode =
   result = code
   if result.kind == nnkReturnStmt:
     if result[0].kind == nnkEmpty:
-      result = newNimNode(nnkBreakStmt).add(newIdentNode(keyImpl.ident))
+      result = newNimNode(nnkBreakStmt).add(ident(keyImpl))
     else:
       result = newStmtList(
         newAssignment(ident"result", result[0][1]),
-        newNimNode(nnkBreakStmt).add(newIdentNode(keyImpl.ident))
+        newNimNode(nnkBreakStmt).add(ident(keyImpl))
       )
   else:
     for i in 0 ..< result.len:
@@ -19,7 +19,7 @@ proc return2breakHelper(code: NimNode): NimNode =
 proc return2break(code: NimNode): NimNode =
   ## Wrap into 'block body' and adapt 'return' statements.
   result = newNimNode(nnkBlockStmt).
-    add(newIdentNode(keyImpl.ident)).
+    add(ident(keyImpl)).
     add(return2breakHelper(code))
 
 proc yieldedVar(code: NimNode): NimNode =
