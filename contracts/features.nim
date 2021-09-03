@@ -1,4 +1,4 @@
 
-include features.quantifiers
-include features.ghostCode
+include features / quantifiers
+include features / ghostCode
 

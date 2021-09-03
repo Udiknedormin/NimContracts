@@ -1,4 +1,4 @@
 
-include declarations.keywords
-include declarations.exceptions
-include declarations.messages
+include declarations / keywords
+include declarations / exceptions
+include declarations / messages
