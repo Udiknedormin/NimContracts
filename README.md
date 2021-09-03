@@ -289,6 +289,14 @@ differences briefly:
     Contracts does not, it's a high-level library.
   * Contra defines some immutability-related tools.
     Contracts does not, it's programming style-agnostic.
+* support
+  * Both Contra and Contracts fully suppor compile-time execution
+    (`{.compiletime.}` and `static`)
+  * Contra seems to have problems for JavaScript target on Nim >1.0.
+    Contracts supports all of it features on JavaScript target.
+  * Contra seems to have problems for NimScript target on Nim > 1.0.
+    Contracts supports its basic features on NimScript target
+    ("old/previous values" feature cannot be used though).
   
 
 #### FAQ
@@ -337,3 +345,9 @@ differences briefly:
     for Release.
   * Contracts: True for both, the approach is very similar.
 
+* How to use Contra and Contracts at Compile Time?
+  * Contra: Add `{.compiletime.}` or `static:`.
+  * Contracts: True for both. Note that `{.compiletime.}` procs cannot be
+    used outside of other `{.compiletime.}`, macros and `static` blocks,
+    because they do not exist at runtime. Using them elsewhere triggers
+    a not-so-obvious error `request to generate code for .compileTime proc`.
