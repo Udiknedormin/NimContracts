@@ -1,0 +1,25 @@
+name: test
+
+on:
+  push:
+    branches:
+    - main
+    paths-ignore:
+    - '*.md'
+  pull_request:
+    paths-ignore:
+    - '*.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Nim tests
+    steps:
+    - uses: actions/checkout@v2
+    - uses: jiro4989/setup-nim-action@v1
+    - name: Nim version
+      run: nim -v
+    - name: Nimble version
+      run: nimble -v
+    - name: Run tests
+      run: nimble test -Y
