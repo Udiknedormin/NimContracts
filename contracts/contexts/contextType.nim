@@ -199,6 +199,6 @@ template sectionProperty(name, key) =
 macro genSectionProperties(): untyped =
    result = newStmtList()
    for key in ContractKeywordsNormal:
-      result.add getAst(sectionProperty(!key.fieldName, key.ident))
+      result.add getAst(sectionProperty(ident(key.fieldName), ident(key)))
 
 genSectionProperties()
