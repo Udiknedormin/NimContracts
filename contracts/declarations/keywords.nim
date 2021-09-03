@@ -57,5 +57,7 @@ proc fieldName(k: Keyword): string =
     of keyImpl: "impl"
     of keyNone: ""
 
-proc ident(k: Keyword): NimIdent {.compileTime.} =
-  !("key_" & k.fieldName)
+proc ident(k: Keyword): NimNode {.compileTime.} =
+  ident("key_" & k.fieldName)
+
+proc newIdentNode(k: Keyword): NimNode {.compileTime.} = ident(k)
