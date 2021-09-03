@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.0"
+version       = "0.2.0"
 author        = "M. Kotwica"
 description   = "Design by contract (DbC) library."
 license       = "MIT"
@@ -9,7 +9,7 @@ skipDirs      = @["tests"]
 
 # Dependencies
 
-requires "nim >= 0.17.2"
+requires "nim >= 1.14.0"
 
 
 # Tests
