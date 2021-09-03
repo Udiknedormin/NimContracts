@@ -181,7 +181,7 @@ proc newContext(code: NimNode, sections: openArray[Keyword]): Context =
    result.docsNode   = stmts.findDocs()
    result.sections   = initTable[Keyword, NimNode]()
    for key in ContractKeywordsNormal:
-      result.sections.add(key, stmts.findSection(key))
+      result.sections[key] = stmts.findSection(key)
    result.original   = code.copyNimTree
    result.final      = nil
 
