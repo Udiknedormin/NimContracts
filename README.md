@@ -1,4 +1,5 @@
 # Contracts
+[![test](https://github.com/Udiknedormin/NimContracts/actions/workflows/test.yml/badge.svg)](https://github.com/Udiknedormin/NimContracts/actions/workflows/test.yml)
 [![nimble](https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble_js.png)](https://github.com/yglukhov/nimble-tag)
 
 This module is used to make contracts – elegant promises that
