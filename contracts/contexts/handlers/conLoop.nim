@@ -8,7 +8,7 @@ proc loopContract(this: NimNode): NimNode =
          let boundedFlag = boundedFlagDecl()
          let oldValuesDecl = getOldValues(it.inv).reduceOldValues
          it.inv = contractInstance(
-           LoopInvariantError.name.ident, it.inv).
+           ident(LoopInvariantDefect.name), it.inv).
            markBoundageDependent(boundedFlag.getFlagSym)
          it.impl.add it.inv
          if oldValuesDecl != nil:

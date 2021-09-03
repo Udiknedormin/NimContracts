@@ -40,7 +40,7 @@
 ##  
 ##  echo isqrt(-8)  # runtime error:
 ##                  #   broke 'x >= 0' promised at FILE.nim(LINE,COLUMN)
-##                  #   [PreConditionError]
+##                  #   [PreConditionDefect]
 ## 
 ## Overview
 ## ========

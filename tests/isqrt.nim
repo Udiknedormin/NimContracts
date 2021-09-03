@@ -54,9 +54,9 @@ suite "isqrt with round":
   test "between squares (postcondition broken)":
     testAllInts:
       for j in i^2+1 .. (i+1)^2-1:
-        expect PostConditionError:
+        expect PostConditionDefect:
           if isqrt(j) == i:  # either it throws or the result is ok
-            raise newException(PostConditionError, "")
+            raise newException(PostConditionDefect, "")
 
 suite "isqrt with cast":
   proc isqrt[T: SomeInteger](x: T): T {.contractual.} =
@@ -74,6 +74,6 @@ suite "isqrt with cast":
 
   test "between squares":
     testAllInts:
-      expect PostConditionError:
+      expect PostConditionDefect:
          for j in i^2+1 .. (i+1)^2-1:
             check isqrt(j) == i
