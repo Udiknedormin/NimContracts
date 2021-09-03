@@ -15,7 +15,7 @@ macro testInts(types: typed, code: untyped): untyped =
     result.add getAst(testInt(typ, code))
 
 template testAllInts(code: untyped): untyped =
-  testInts([int8,int16,int32,int64], code)
+  testInts([int8,int16], code)
 
 
 suite "isqrt with floor":
@@ -33,7 +33,7 @@ suite "isqrt with floor":
       check isqrt(i*i) == i
 
   test "between squares":
-    testInts([int8, int16]) do:
+    testAllInts:
       for j in i^2+1 .. (i+1)^2-1:
          check isqrt(j) == i
 
@@ -52,7 +52,7 @@ suite "isqrt with round":
       check isqrt(i*i) == i
 
   test "between squares (postcondition broken)":
-    testInts([int8, int16]) do:
+    testAllInts:
       for j in i^2+1 .. (i+1)^2-1:
         expect PostConditionError:
           if isqrt(j) == i:  # either it throws or the result is ok
@@ -73,6 +73,7 @@ suite "isqrt with cast":
       check isqrt(i*i) == i
 
   test "between squares":
-    testInts([int8, int16]) do:
-      for j in i^2+1 .. (i+1)^2-1:
-         check isqrt(j) == i
+    testAllInts:
+      expect PostConditionError:
+         for j in i^2+1 .. (i+1)^2-1:
+            check isqrt(j) == i
