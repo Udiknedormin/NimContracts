@@ -20,8 +20,10 @@ const explainLevel =
    when defined(explainContracts):
       if explainContracts == "true":
          ExplainLevel.Output
+      elif explainContracts == "" or explainContracts == "false":
+         ExplainLevel.None
       else:
-         (ExplainLevel)explainContracts.parseInt
+         ExplainLevel(parseInt(explainContracts))
    else:
       ExplainLevel.None
 

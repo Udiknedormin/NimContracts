@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.2.0"
+version       = "0.2.1"
 author        = "M. Kotwica"
 description   = "Design by contract (DbC) library."
 license       = "MIT"
@@ -21,7 +21,7 @@ task tests, "run tests":
   --stacktrace: on
   --linetrace: on
   --debuginfo
-  --define:explainContracts:0
+  --define:"explainContracts:0"
   --path: "."
   --run
   var dir_list = @["tests"]

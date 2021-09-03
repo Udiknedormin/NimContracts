@@ -5,12 +5,12 @@ proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
 
       if ct.pre != nil:
          ct.pre = contractInstance(
-           PreConditionError.name.ident, ct.pre)
+           ident(PreConditionDefect.name), ct.pre)
 
       if ct.post != nil:
          let preparationNode = getOldValues(ct.post).reduceOldValues
          let postCondNode = contractInstance(
-           PostConditionError.name.ident, ct.post)
+           ident(PostConditionDefect.name), ct.post)
          ct.post = newTree(nnkDefer, postCondNode)
          ct.olds = preparationNode
 

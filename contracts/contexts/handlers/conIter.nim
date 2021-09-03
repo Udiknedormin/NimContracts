@@ -56,7 +56,7 @@ proc iteratorContract(this: NimNode): NimNode =
       let boundedFlag = if oldValuesDecl == nil: nil
                         else: boundedFlagDecl()
       let invariant = contractInstance(
-        LoopInvariantError.name.ident, it.inv).
+        ident(LoopInvariantDefect.name), it.inv).
         markBoundageDependent
       it.pre.add oldValuesDecl
       it.impl = yield2yielded(

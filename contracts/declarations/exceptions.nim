@@ -1,12 +1,12 @@
 
 type
-  ContractError*       = object of Exception ## \
+  ContractDefect*       = object of Defect ## \
     ## violation of any contract at runtime
-  CustomContractError* = object of ContractError ## \
+  CustomContractDefect* = object of ContractDefect ## \
     ## violation of a custom contract (promise)
-  PreConditionError*   = object of ContractError ## \
+  PreConditionDefect*   = object of ContractDefect ## \
     ## violation of a requirement
-  PostConditionError*  = object of ContractError ## \
+  PostConditionDefect*  = object of ContractDefect ## \
     ## violation of an assurance
-  LoopInvariantError*  = object of ContractError ## \
+  LoopInvariantDefect*  = object of ContractDefect ## \
     ## violation of a loop/iterator invariant

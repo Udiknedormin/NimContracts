@@ -16,7 +16,7 @@ proc findContract(thisNode: NimNode): NimNode =
     if result[0].kind in {nnkIdent, nnkSym} and $result[0] == keyCust:
       hint(HintMsgCustomContractUsed % [result.lineinfo])
       result = contractInstance(
-        CustomContractError.name.ident, result[1])
+        ident(CustomContractDefect.name), result[1])
   else:
     for i in 0 .. thisNode.len - 1:
       result[i] = findContract(result[i])
