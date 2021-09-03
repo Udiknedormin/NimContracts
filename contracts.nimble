@@ -21,7 +21,7 @@ task tests, "run tests":
   --stacktrace: on
   --linetrace: on
   --debuginfo
-  --define:explainContracts:0
+  --define:"explainContracts:0"
   --path: "."
   --run
   var dir_list = @["tests"]
