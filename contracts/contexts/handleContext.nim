@@ -1,8 +1,11 @@
 proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
-   ghost do:
-      let docs = ct.genDocs()
-      ct.explainContractBefore()
+   ct.explainContractBefore()
+   ct.handler()  # notice invariant MUST be included in impl!
 
+   result = newStmtList(ct.head)
+   let docs = ct.genDocs()
+
+   ghost do:
       if ct.pre != nil:
          ct.pre = contractInstance(
            ident(PreConditionDefect.name), ct.pre)
@@ -14,10 +17,6 @@ proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
          ct.post = newTree(nnkDefer, postCondNode)
          ct.olds = preparationNode
 
-      ct.handler()  # notice invariant MUST be included in impl!
-
-      result = newStmtList(ct.head)
-
       if ct.olds != nil:
          result.add ct.olds
 
@@ -26,33 +25,31 @@ proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
 
       if ct.post != nil:  # using defer
          result.add ct.post
-
-      let stmtsIdx = ct.tail.findChildIdx(it.kind == nnkStmtList)
-      ct.tail[stmtsIdx] = findContract(ct.impl)
-
-      if ct.kind == EntityKind.declaration:
-        let tmp = ct.tail[stmtsIdx]
-        ct.tail[stmtsIdx] = newStmtList(result, tmp)
-        result = ct.tail
-      else:
-        result.add ct.tail
-
-        if ct.kind == EntityKind.blocklike:
-          # for `defer` to work properly:
-          result = newBlockStmt(result)
-
-      # add generated docs and generate it in the code
-      if ct.kind != EntityKind.blocklike:
-        ct.docsNode.add2docs(docs)
-        result.docs2body(ct.docsNode)
-
-      ct.final = result
-      ct.explainContractAfter()
-
    do:
-      let stmtsIdx = ct.tail.findChildIdx(it.kind == nnkStmtList)
-      result[stmtsIdx] = findContract(ct.impl)
+      if ct.olds != nil:
+         result.add ct.olds
 
+   # add generated docs and generate it in the code
+   if ct.kind != EntityKind.blocklike:
+      ct.docsNode.add2docs(docs)
+      result.docs2body(ct.docsNode)
+
+   let stmtsIdx = ct.tail.findChildIdx(it.kind == nnkStmtList)
+   ct.tail[stmtsIdx] = findContract(ct.impl)
+
+   if ct.kind == EntityKind.declaration:
+      let tmp = ct.tail[stmtsIdx]
+      ct.tail[stmtsIdx] = newStmtList(result, tmp)
+      result = ct.tail
+   else:
+      result.add ct.tail
+
+      if ct.kind == EntityKind.blocklike:
+         # for `defer` to work properly:
+         result = newBlockStmt(result)
+
+   ct.final = result
+   ct.explainContractAfter()
 
 proc contextHandle(code: NimNode,
                    sections: openArray[Keyword],
