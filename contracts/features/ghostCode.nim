@@ -5,11 +5,12 @@
 template ghostly(): untyped =
   ## The conditions which should be fulfilled for ghost code
   ## to be turned on.
-  compileOption("assertions")
+  (not defined(release)) and compileOption("assertions")
 
 template ghost*(code: untyped): untyped =
   ## Marks `ghost code`, only used for tests and static analysis.
-  ## It can be turned on or off by ``assertions`` compiler flag.
+  ## It can be turned off by using the ``-d:release`` mode or
+  ## turning the ``assertions`` compiler flag to "off" state.
   ## Example:
   ##
   ## .. code-block:: nim
