@@ -1,14 +1,11 @@
 proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
    ct.explainContractBefore()
-
    ct.handler()  # notice invariant MUST be included in impl!
 
    result = newStmtList(ct.head)
+   let docs = ct.genDocs()
 
    ghost do:
-
-      let docs = ct.genDocs()
-
       if ct.pre != nil:
          ct.pre = contractInstance(
            ident(PreConditionDefect.name), ct.pre)
@@ -28,23 +25,16 @@ proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
 
       if ct.post != nil:  # using defer
          result.add ct.post
-
-      # add generated docs and generate it in the code
-      if ct.kind != EntityKind.blocklike:
-         ct.docsNode.add2docs(docs)
-         result.docs2body(ct.docsNode)
-
    do:
-
       if ct.olds != nil:
          result.add ct.olds
 
-      # generate docs in the code
-      if ct.kind != EntityKind.blocklike:
-         result.docs2body(ct.docsNode)
+   # add generated docs and generate it in the code
+   if ct.kind != EntityKind.blocklike:
+      ct.docsNode.add2docs(docs)
+      result.docs2body(ct.docsNode)
 
    let stmtsIdx = ct.tail.findChildIdx(it.kind == nnkStmtList)
-
    ct.tail[stmtsIdx] = findContract(ct.impl)
 
    if ct.kind == EntityKind.declaration:
@@ -59,7 +49,6 @@ proc handle(ct: Context, handler: proc(ct: Context) {.closure.}): NimNode =
          result = newBlockStmt(result)
 
    ct.final = result
-
    ct.explainContractAfter()
 
 proc contextHandle(code: NimNode,
