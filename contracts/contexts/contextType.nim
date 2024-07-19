@@ -123,6 +123,7 @@ proc entityType(thisNode: NimNode): EntityType =
       nnkIteratorDef:  EntityType.Iterator,
       nnkMethodDef:    EntityType.Method,
       nnkProcDef:      EntityType.Procedure,
+      nnkFuncDef:      EntityType.Procedure,
       nnkTemplateDef:  EntityType.Template,
       nnkMacroDef:     EntityType.Macro,
       nnkTypeDef:      EntityType.Type,

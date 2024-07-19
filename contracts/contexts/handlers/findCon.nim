@@ -6,7 +6,7 @@ proc findContract(thisNode: NimNode): NimNode =
   ## Finds contractual entities inside 'contractual' block.
   result = thisNode
   case result.kind:
-  of nnkProcDef, nnkConverterDef, nnkMethodDef:
+  of nnkProcDef, nnkFuncDef, nnkConverterDef, nnkMethodDef:
     result = proceduralContract(result)
   of nnkIteratorDef:
     result = iteratorContract(result)
